@@ -8,15 +8,10 @@
  
  Explanation video: http://youtu.be/mdTeqiWyFnc
 """
-import os
-import sys
-import argparse
-import csv
-import json
 import pickle
 import pygame
 
-from grid import GridWorld
+# from grid import GridWorld
 # from collections import Collection
 
 
@@ -43,6 +38,7 @@ def mapping(states):
 
 
 def create_world(grid_world, filepath):
+    """ Design obstacles of a grid-world. """
     # Define some colors
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -163,16 +159,9 @@ def create_world(grid_world, filepath):
     # Be IDLE friendly. If you forget this line, the program will 'hang'
     # on exit.
     pygame.quit()
-    grid_world.obstacles = visited
-    for state in grid_world.obstacles:
-        grid_world.grid[state[0]][state[1]] = 'O'
+    grid_world.update_obstacles(visited)
 
     # Save the environment using pickle
     with open(filepath, 'wb') as data_file:
         # json.dump(grid_world.__dict__, foo, ensure_ascii=False)
         pickle.dump(grid_world, data_file)
-
-
-def readWorld(fp):
-    with open(fp, 'rb') as data_file:
-        data = pickle.load(data_file)

@@ -1,7 +1,3 @@
-import numpy as np
-import matplotlib.pyplot as plt
-
-
 class GridWorld:
     '''
         Creates a grid-world environment.
@@ -38,6 +34,13 @@ class GridWorld:
         self.initialize_rewards()
         self.reset()
 
+    def update_obstacles(self, obstacles):
+        self.obstacles = obstacles
+        for state in obstacles:
+            self.grid[state[0]][state[1]] = 'O'
+        self.initialize_rewards()
+        self.reset()
+        
     def initialize_rewards(self):
         """
         Reward function:

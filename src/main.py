@@ -4,92 +4,64 @@ import sys
 import argparse
 import pickle
 import random
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-
-import itertools
 
 # Custom imports
 import design_obstacles as DO
+import plotting as P
+from agent import Agent
 from grid import GridWorld as G
 
+def readWorld(fp):
+    """ Reads a grid-world from an .env file. """
+    with open(fp, 'rb') as data_file:
+        data = pickle.load(data_file)
+    return data
 
-# def create_demos(filename):
-#     '''
-#         Creates a dataset of demonstrations
-#     '''
-#     demo_list = []
-#     curr_dir = os.getcwd()
-#     filepath = os.path.join(curr_dir, filename)
-#     with open(filepath, 'r') as foo:
-#         contents = foo.readlines()
-#     N = len(contents)
-#     for line in contents:
-#         l = line.strip()
-#         demo_list.append(list(l.split(',')))
-#     return N, demo_list
-
-def test():
+def main(env_file, create_obstacles=False):
+    # Define the grid-world start and goal locations
     rows = 5
-    cols = 8
+    cols = 5
     init_pos = (rows-1, 0)
     goals = [(0, cols-1), (rows-1, cols-1)]
     obstacles = []
-    fname = os.path.join(env_dir, 'env1.env')
+    env_name = os.path.join(env_dir, env_file)
     g = G(rows, cols, init_pos, goals, obstacles)
-    DO.create_world(g, fname)
-    g.render()
 
+    # Design the obstacles and save it in the env_file
+    if create_obstacles:
+        DO.create_world(g, env_name)
+
+    # Read the saved env_file
+    g = readWorld(env_name)
+    # Show the grid-world
+    # g.render()
+
+    # Define an agent or robot for the grid-world
+    robot = Agent(g)
+    robot.gen_policy()
+
+    # Show the plots of the grid-world and its reward 
+    # Image available in the fig_dir under parent.
+    P.gen_plots(robot, fig_dir)
 if __name__ == '__main__':
+    # All environment files are saved in the 'env' folder
     env_dir = os.path.join(os.pardir, "envs")
     if not os.path.exists(env_dir):
         os.makedirs(env_dir)
-    test()
-    exit()
-    parser = argparse.ArgumentParser(
-        description='Grid-World setup to provide demonstrations')
-    parser.add_argument('f', type=str, help='File name of environment')
-    parser.add_argument('--d',
-                        action='store_true',
-                        help='Create a demonstration')
-    args = parser.parse_args()
-
-    give_demo = False
-    if args.d: give_demo = args.d
-
-    env_file = os.path.join(os.getcwd(), args.f)
-    with open(env_file, "rb") as e_fp:
-        data = pickle.load(e_fp)
-
-    # Create a grid world
-    n_rows = data.rows  # rows in grid
-    n_cols = data.cols  # columns in grid
-    print("Grid-world size: %d x %d" % (n_rows, n_cols))
-    init_pos = data.init_pos  # initial position
-    goals = data.goals  # goal position
-    obstacles = data.obstacles
-    grid_world = grid.GridWorld(n_rows, n_cols, init_pos, goals, obstacles)
-
-    # p, c, pc = utilities.bfs(grid_world)
-    # print("Path: ", p)
-    # print("Path cost: ", c+1)
-    # print("Coordinates: ", pc)
-
-    demo_fname = args.f
-    if sys.platform == 'win32':
-        demo_fname = demo_fname.split("\\")[1]
-    else:
-        demo_fname = demo_fname.split('/')[1]
-    demo_fname = demo_fname.split('.')[0]
-    if not os.path.exists("demos"):
-        os.makedirs("demos")
-
-    # If you want to create a demo
-    if give_demo: getDemo(grid_world, demo_fname)
-    # Point to the demonstration file
-    demo_file = "human_demos_{}.txt".format(demo_fname)
-    demo_file = os.path.join(os.getcwd(), "demos", demo_file)
-    fig_dir = "figures_{}".format(demo_fname)
+    
+    # All figures are saved in 'figs' folder and then go figure
+    fig_dir = os.path.join(os.pardir, "figs")
     if not os.path.exists(fig_dir):
         os.makedirs(fig_dir)
+
+    parser = argparse.ArgumentParser(
+        description='Grid-World setup to provide demonstrations')
+    parser.add_argument('f', type=str, help='filename of environment with extension. Example: env1.env')
+    parser.add_argument('--d',
+                        action='store_true',
+                        help='design obstacles in PyGame')
+    args = parser.parse_args()
+
+    env_file = args.f
+    create_obstacles = args.d
+    main(env_file, create_obstacles)
