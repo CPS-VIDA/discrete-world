@@ -29,7 +29,7 @@ def gen_plots(agent, fig_dir):
     fig.suptitle("Policy", fontsize=20)
 
     h1 = axs[0].imshow(reward, cmap='Blues', extent=[0, n_rows, 0, n_cols])
-    axs[0].set_title('Local Reward', fontsize=20)
+    axs[0].set_title('Reward', fontsize=20)
     # Major ticks
     axs[0].set_xticks(np.arange(0, n_rows, 1))
     axs[0].set_yticks(np.arange(0, n_cols, 1))
