@@ -35,6 +35,7 @@ class GridWorld:
         self.reset()
 
     def update_obstacles(self, obstacles):
+        """ Once you design obstacles, update it back in the grid-world. """
         self.obstacles = obstacles
         for state in obstacles:
             self.grid[state[0]][state[1]] = 'O'
