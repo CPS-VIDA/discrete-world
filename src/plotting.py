@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 
-def gen_plots(agent, fig_dir):
+def gen_plots(agent, fig_dir, env_name):
     # plt.matshow(global_rewards, cmap='viridis'), plt.colorbar()
 
     n_rows = agent.world.rows
@@ -25,7 +25,7 @@ def gen_plots(agent, fig_dir):
         visit_path.append(state)
 
     # Plotting
-    fig, axs = plt.subplots(1, 2, figsize=(16, 16))
+    fig, axs = plt.subplots(1, 2, figsize=(16, 12))
     fig.suptitle("Policy", fontsize=20)
 
     h1 = axs[0].imshow(reward, cmap='Blues', extent=[0, n_rows, 0, n_cols])
@@ -59,5 +59,5 @@ def gen_plots(agent, fig_dir):
     # axs[2].grid(which='major', color='k', linewidth=2)
     # fig.colorbar(h3, ax=axs[2])
     plt.legend()
-    fig_path = os.path.join(fig_dir, "agent.png")
+    fig_path = os.path.join(fig_dir, env_name+".png")
     plt.savefig(fig_path)

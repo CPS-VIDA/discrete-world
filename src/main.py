@@ -17,22 +17,22 @@ def readWorld(fp):
         data = pickle.load(data_file)
     return data
 
-def main(env_file, create_obstacles=False):
+def main(env_name, create_obstacles=False):
     # Define the grid-world start and goal locations
     rows = 5
     cols = 5
     init_pos = (rows-1, 0)
     goals = [(0, cols-1), (rows-1, cols-1)]
     obstacles = []
-    env_name = os.path.join(env_dir, env_file)
+    env_file = os.path.join(env_dir, env_name+".env")
     g = G(rows, cols, init_pos, goals, obstacles)
 
     # Design the obstacles and save it in the env_file
     if create_obstacles:
-        DO.create_world(g, env_name)
+        DO.create_world(g, env_file)
 
     # Read the saved env_file
-    g = readWorld(env_name)
+    g = readWorld(env_file)
     # Show the grid-world
     # g.render()
 
@@ -42,7 +42,8 @@ def main(env_file, create_obstacles=False):
 
     # Show the plots of the grid-world and its reward 
     # Image available in the fig_dir under parent.
-    P.gen_plots(robot, fig_dir)
+    P.gen_plots(robot, fig_dir, env_name)
+
 if __name__ == '__main__':
     # All environment files are saved in the 'env' folder
     env_dir = os.path.join(os.pardir, "envs")
@@ -56,12 +57,12 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
         description='Grid-World setup to provide demonstrations')
-    parser.add_argument('f', type=str, help='filename of environment with extension. Example: env1.env')
+    parser.add_argument('f', type=str, help='filename of environment; automatically appends .env extension: Example: env1')
     parser.add_argument('--d',
                         action='store_true',
                         help='design obstacles in PyGame')
     args = parser.parse_args()
 
-    env_file = args.f
+    env_name = args.f
     create_obstacles = args.d
-    main(env_file, create_obstacles)
+    main(env_name, create_obstacles)
