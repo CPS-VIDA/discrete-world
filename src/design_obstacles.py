@@ -8,8 +8,15 @@
  
  Explanation video: http://youtu.be/mdTeqiWyFnc
 """
-import pygame, os, argparse, csv, json, pickle
-import grid
+import os
+import sys
+import argparse
+import csv
+import json
+import pickle
+import pygame
+
+from grid import GridWorld
 # from collections import Collection
 
 
@@ -35,14 +42,14 @@ def mapping(states):
     return action_list
 
 
-def createWorld(grid_world, filepath):
+def create_world(grid_world, filepath):
     # Define some colors
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     GREEN = (0, 255, 0)
     RED = (255, 0, 0)
-    NAVY = (150, 150, 255)
-    LIGHTB = (75, 75, 255)
+    LIGHTB = (150, 150, 255)
+    NAVY = (60, 60, 255)
 
     state_colors = {
         'road': WHITE,
@@ -66,13 +73,14 @@ def createWorld(grid_world, filepath):
 
     # Create a 2 dimensional array. A two dimensional
     # array is simply a list of lists.
-    sz = grid_world.rows
+    nrows = grid_world.rows
+    ncols = grid_world.cols
     grid = []
-    for row in range(sz):
+    for row in range(nrows):
         # Add an empty array that will hold each cell
         # in this row
         grid.append([])
-        for column in range(sz):
+        for column in range(ncols):
             grid[row].append(0)  # Append a cell
 
     # Set row 1, cell 5 to one. (Remember rows and
@@ -130,8 +138,8 @@ def createWorld(grid_world, filepath):
         screen.fill(BLACK)
 
         # Draw the grid
-        for row in range(sz):
-            for column in range(sz):
+        for row in range(nrows):
+            for column in range(ncols):
                 color = state_colors['road']
                 if grid[row][column] == OCC:
                     color = state_colors['occ']
@@ -157,8 +165,7 @@ def createWorld(grid_world, filepath):
     pygame.quit()
     grid_world.obstacles = visited
     for state in grid_world.obstacles:
-        x, y = state
-        grid_world.grid[x][y] = 'O'
+        grid_world.grid[state[0]][state[1]] = 'O'
 
     # Save the environment using pickle
     with open(filepath, 'wb') as data_file:
@@ -169,35 +176,3 @@ def createWorld(grid_world, filepath):
 def readWorld(fp):
     with open(fp, 'rb') as data_file:
         data = pickle.load(data_file)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description='Creating a grid-world environment with obstacles')
-    parser.add_argument('--n', default=3, type=int, help='Size of grid')
-    parser.add_argument('--cr',
-                        action='store_true',
-                        help='Create a grid-world')
-    parser.add_argument('f', type=str, help='File name')
-    args = parser.parse_args()
-
-    SZ = args.n
-    filename = args.f
-    create = False
-    if args.cr: create = True
-
-    start = (SZ-1, 0)
-    goals = [(0, SZ-1), (SZ-1, SZ-1)]
-    obstacles = []
-    G = grid.GridWorld(SZ, SZ, start, goals, obstacles)
-
-    env_dir = 'envs'
-    if not os.path.exists(env_dir):
-        os.makedirs(env_dir)
-    env_path = os.path.join(os.getcwd(), env_dir)
-    filepath = os.path.join(env_path, filename)
-
-    if create:
-        createWorld(G, filepath)
-
-    readWorld(filepath)

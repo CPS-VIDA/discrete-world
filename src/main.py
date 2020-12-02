@@ -11,7 +11,9 @@ import matplotlib.patches as mpatches
 import itertools
 
 # Custom imports
+import design_obstacles as DO
 from grid import GridWorld as G
+
 
 # def create_demos(filename):
 #     '''
@@ -30,22 +32,19 @@ from grid import GridWorld as G
 
 def test():
     rows = 5
-    cols = 3
+    cols = 8
     init_pos = (rows-1, 0)
-    goals = [(0, cols-1)]
+    goals = [(0, cols-1), (rows-1, cols-1)]
     obstacles = []
+    fname = os.path.join(env_dir, 'env1.env')
     g = G(rows, cols, init_pos, goals, obstacles)
+    DO.create_world(g, fname)
     g.render()
-    g.reset()
-    s = g.current_state
-    for i in range(5):
-        a = random.choice(g.action_space)
-        s_, r, done = g.step(a)
-        s = s_
-
 
 if __name__ == '__main__':
-
+    env_dir = os.path.join(os.pardir, "envs")
+    if not os.path.exists(env_dir):
+        os.makedirs(env_dir)
     test()
     exit()
     parser = argparse.ArgumentParser(
