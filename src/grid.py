@@ -2,7 +2,7 @@ class GridWorld:
     '''
         Creates a grid-world environment.
     '''
-    def __init__(self, rows: int, cols: int, init_pos: tuple, goals, obstacles):
+    def __init__(self, rows: int, cols: int, init_pos: tuple, goals, obstacles, p_slip: int):
         """
         Defines grid-world with following properties:
             rows: integer
@@ -14,6 +14,7 @@ class GridWorld:
         self.rows = rows
         self.cols = cols
         self.obstacles = obstacles
+        self.p_slip = p_slip
         self.grid = [['_' for i in range(self.cols)] for j in range(self.rows)]
         self.init_pos = init_pos
         self.goals = goals
