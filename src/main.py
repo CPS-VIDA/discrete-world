@@ -24,8 +24,9 @@ def main(env_name, create_obstacles=False):
     init_pos = (rows-1, 0)
     goals = [(0, cols-1), (rows-1, cols-1)]
     obstacles = []
+    p_slip = 0.8
     env_file = os.path.join(env_dir, env_name+".env")
-    g = G(rows, cols, init_pos, goals, obstacles)
+    g = G(rows, cols, init_pos, goals, obstacles, p_slip)
 
     # Design the obstacles and save it in the env_file
     if create_obstacles:
@@ -38,6 +39,8 @@ def main(env_name, create_obstacles=False):
 
     # Define an agent or robot for the grid-world
     robot = Agent(g)
+
+    # ----- This is where you define your RL agent. I just chose a random policy ----
     robot.gen_policy()
 
     # Show the plots of the grid-world and its reward 
@@ -56,7 +59,7 @@ if __name__ == '__main__':
         os.makedirs(fig_dir)
 
     parser = argparse.ArgumentParser(
-        description='Grid-World setup to provide demonstrations')
+        description='Grid-World setup')
     parser.add_argument('f', type=str, help='filename of environment; automatically appends .env extension: Example: env1')
     parser.add_argument('--d',
                         action='store_true',

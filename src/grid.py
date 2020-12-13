@@ -1,8 +1,10 @@
+import random
+
 class GridWorld:
     '''
         Creates a grid-world environment.
     '''
-    def __init__(self, rows: int, cols: int, init_pos: tuple, goals, obstacles, p_slip: int):
+    def __init__(self, rows: int, cols: int, init_pos: tuple, goals, obstacles, p_slip: float=0.0):
         """
         Defines grid-world with following properties:
             rows: integer
@@ -10,6 +12,7 @@ class GridWorld:
             init_pos: tuple (x, y)
             goals: list of tuples
             obstacles: list of tuples
+            p_slip: slip probability
         """
         self.rows = rows
         self.cols = cols
@@ -18,7 +21,7 @@ class GridWorld:
         self.grid = [['_' for i in range(self.cols)] for j in range(self.rows)]
         self.init_pos = init_pos
         self.goals = goals
-        self.action_space = ['U', 'D', 'L', 'R']
+        self.action_space = ['U', 'R', 'D', 'L']
         self.grid[init_pos[0]][init_pos[1]] = 'S'
 
         for goal_pos in goals:
@@ -113,12 +116,28 @@ class GridWorld:
             print("\n")
         return ""        
 
+    def choose_action(self, action):
+        """ Probabilistic action. 
+            With probability 'roll' >= p_slip, returns the same action,
+            else uniformly chooses an orthogonal action.
+        """
+        roll = random.random() # generates a random number [0.0, 1.0)
+        idx = self.action_space.index(action)
+        n_actions = len(self.action_space) # for the sake of generalization
+        other_actions = [self.action_space[(idx-1) % n_actions], self.action_space[(idx+1) % n_actions]] # get orthogonal actions
+        if roll >= self.p_slip:
+            return action
+        else:
+            return random.choice(other_actions)
+
+
     def step(self, action):
         """ Returns next state, observed reward and done. """
-        next_state = self.nextState(self.current_state, action)
-        reward = self.reward[next_state[0]][next_state[1]]
-        self.current_state = next_state
-        done = self.isGoal(next_state)
+        p_action = self.choose_action(action) # get the stochastic action
+        next_state = self.nextState(self.current_state, p_action) # next state
+        reward = self.reward[next_state[0]][next_state[1]] # reward observed
+        self.current_state = next_state # update current state
+        done = self.isGoal(next_state) # check if goal is reached
         return (next_state, reward, done)
 
     def render(self):
