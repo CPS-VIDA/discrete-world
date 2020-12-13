@@ -98,7 +98,12 @@ class Agent:
                 # a = self.get_action_v2(s, i)
                 s_, r, done = env.step(self.world.action_space[a])
                 s_number = self.states_to_num(s)
-                self.q_table[s_number,a] += alpha * (r + gamma * self.maxAction(s_) - self.q_table[s_number,a])
+                # For Q-Learning
+                # self.q_table[s_number,a] += alpha * (r + gamma * self.maxAction(s_) - self.q_table[s_number,a])
+                # For SARSA
+                nexts_number = self.states_to_num(s_)
+                a_next = self.get_action(s_, eps, min_eps)
+                self.q_table[s_number,a] += alpha * (r + gamma * self.q_table[nexts_number,a_next] - self.q_table[s_number,a])
                 s = s_
                 if maxSteps >= (self.world.rows * self.world.cols * 10):
                     done = True

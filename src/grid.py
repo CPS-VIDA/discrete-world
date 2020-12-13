@@ -1,5 +1,5 @@
 import random
-random.seed(0)
+# random.seed(0)
 
 class GridWorld:
     '''
@@ -128,6 +128,7 @@ class GridWorld:
         idx = self.action_space.index(action)
         n_actions = len(self.action_space) # for the sake of generalization
         other_actions = [self.action_space[(idx-1) % n_actions], self.action_space[(idx+1) % n_actions]] # get orthogonal actions
+        print(roll)
         if roll >= self.p_slip:
             return action
         else:
