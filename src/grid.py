@@ -1,4 +1,5 @@
 import random
+random.seed(0)
 
 class GridWorld:
     '''
@@ -109,6 +110,8 @@ class GridWorld:
         return False
 
     def __str__(self):
+        x, y = self.current_state
+        self.grid[x][y] = 'H'
         """ Printing stuff. """
         for i in range(self.rows):
             for j in range(self.cols):
@@ -137,7 +140,7 @@ class GridWorld:
         next_state = self.nextState(self.current_state, p_action) # next state
         reward = self.reward[next_state[0]][next_state[1]] # reward observed
         self.current_state = next_state # update current state
-        done = self.isGoal(next_state) # check if goal is reached
+        done = self.isGoal(next_state) or self.isObstacle(next_state) # check if goal is reached
         return (next_state, reward, done)
 
     def render(self):

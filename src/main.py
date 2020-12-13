@@ -1,9 +1,7 @@
 # Python defaults
 import os
-import sys
 import argparse
 import pickle
-import random
 
 # Custom imports
 import design_obstacles as DO
@@ -21,10 +19,10 @@ def main(env_name, create_obstacles=False):
     # Define the grid-world start and goal locations
     rows = 5
     cols = 5
-    init_pos = (rows-1, 0)
-    goals = [(0, cols-1), (rows-1, cols-1)]
+    init_pos = (0, 0)
+    goals = [(rows-1, cols-1)]
     obstacles = []
-    p_slip = 0.8
+    p_slip = 0.1
     env_file = os.path.join(env_dir, env_name+".env")
     g = G(rows, cols, init_pos, goals, obstacles, p_slip)
 
@@ -41,7 +39,11 @@ def main(env_name, create_obstacles=False):
     robot = Agent(g)
 
     # ----- This is where you define your RL agent. I just chose a random policy ----
-    robot.gen_policy()
+    params = {'min_eps': 0.01, 'n_episodes': 10000, 'gamma': 0.8, 'alpha': 0.3}
+    robot.learner(params)
+    robot.gen_policy(option=3)
+    # print(robot.q_table)
+    print(robot)
 
     # Show the plots of the grid-world and its reward 
     # Image available in the fig_dir under parent.
