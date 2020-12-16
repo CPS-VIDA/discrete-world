@@ -1,5 +1,6 @@
 import random
 
+
 class Agent:
     def __init__(self, world):
         self.world = world
@@ -12,7 +13,7 @@ class Agent:
         s = env.init_pos
         for i in range(5):
             self.states.append(s)
-            a = random.choice(env.action_space)
+            a = env.action_space.sample()
             s_, r, done = env.step(a)
             print(f"State: {s}, Action: {a}, Reward: {r}")
             s = s_
@@ -24,5 +25,4 @@ class Agent:
             for j in range(self.world.cols):
                 print("%3s" % self.world.grid[i][j], end=" ")
             print("\n")
-        return ""  
-    
+        return ""
