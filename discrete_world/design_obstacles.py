@@ -9,11 +9,11 @@
  Explanation video: http://youtu.be/mdTeqiWyFnc
 """
 import pickle
-from typing import Tuple
+from typing import List
 
 import pygame
 
-from .grid import Actions, GridWorld, States
+from .grid import Actions
 
 # from grid import GridWorld
 # from collections import Collection
@@ -79,7 +79,7 @@ def create_world(grid_world, filepath):
     # array is simply a list of lists.
     nrows = grid_world.rows
     ncols = grid_world.cols
-    grid = []
+    grid = []  # type: List[List[int]]
     for row in range(nrows):
         # Add an empty array that will hold each cell
         # in this row
@@ -173,7 +173,7 @@ def create_world(grid_world, filepath):
     # Be IDLE friendly. If you forget this line, the program will 'hang'
     # on exit.
     pygame.quit()
-    grid_world.update_obstacles(visited)
+    grid_world.create_obstacles(visited)
 
     # Save the environment using pickle
     with open(filepath, "wb") as data_file:

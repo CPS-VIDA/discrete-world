@@ -28,13 +28,14 @@ class GridWorld:
     # Grid Internals
     _rows: int
     _cols: int
-    _obstacles: Iterable[Tuple[int, int]]
-    _goals: Iterable[Tuple[int, int]]
+    _init_pos: Tuple[int, int]
+    _obstacles: Set[Tuple[int, int]]
+    _goals: Set[Tuple[int, int]]
+    _p_slip: float
 
     _grid: List[List[States]]
 
     # Transition Internals
-    _p_slip: float
     _reward: List[List[float]]
     _rng: npr.Generator
 
@@ -48,19 +49,21 @@ class GridWorld:
         init_pos: Tuple[int, int],
         goals: Iterable[Tuple[int, int]],
         obstacles: Iterable[Tuple[int, int]],
+        p_slip: float,
         seed: Optional[Union[int, npr.Generator]] = None,
     ):
         """ Represents the grid-world.  """
         self._rows = rows
         self._cols = cols
-        self._obstacles = obstacles
         self._grid = [
             [States.EMPTY for i in range(self.cols)] for j in range(self.rows)
         ]
 
         self._init_pos = init_pos
         self._current_pos = init_pos
-        self._goals = goals
+        self._goals = set(goals)
+        self._obstacles = set(obstacles)
+        self._p_slip = p_slip
 
         self._grid[init_pos[0]][init_pos[1]] = States.START
 
@@ -92,11 +95,11 @@ class GridWorld:
         return self._grid
 
     @property
-    def obstacles(self) -> Iterable[Tuple[int, int]]:
+    def obstacles(self) -> Set[Tuple[int, int]]:
         return self._obstacles
 
     @property
-    def goals(self) -> Iterable[Tuple[int, int]]:
+    def goals(self) -> Set[Tuple[int, int]]:
         return self._goals
 
     @property
@@ -111,9 +114,22 @@ class GridWorld:
     def current_state(self) -> Tuple[int, int]:
         return self._current_pos
 
-    def create_obstacles(self, obstacles: List[Tuple[int, int]]):
+    @property
+    def p_slip(self) -> float:
+        return self._p_slip
+
+    @p_slip.setter
+    def p_slip(self, p: float):
+        if 0 <= p <= 1:
+            self._p_slip = p
+        else:
+            raise ValueError(
+                "Slipping probability needs to in [0, 1]. Got {}".format(p)
+            )
+
+    def create_obstacles(self, obstacles: Iterable[Tuple[int, int]]):
         """Setup the obstacles by inputting a list of grid positions"""
-        self._obstacles = obstacles
+        self._obstacles = set(obstacles)
         for state in self.obstacles:
             self.grid[state[0]][state[1]] = States.OBSTACLE
         self._initialize_rewards()
@@ -213,7 +229,7 @@ class GridWorld:
             return True
         return False
 
-    def is_goal(self, state: Tuple[int, int]) -> int:
+    def is_goal(self, state: Tuple[int, int]) -> bool:
         """ Checks if the state is a goal. """
         if state in self.goals:
             return True
@@ -264,3 +280,5 @@ class GridWorld:
     @property
     def observation_space(self) -> Discrete:
         return Discrete(2)  # Observations are the (row, col) position of agent
+
+    # TODO(aniruddh): Make a load from json method.

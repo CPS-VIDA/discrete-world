@@ -1,11 +1,10 @@
-import os
+from pathlib import Path
 
-import matplotlib.patches as mpatches
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 
-def gen_plots(agent, fig_dir, env_name):
+def gen_plots(agent, fig_dir: Path, env_file: Path):
     # plt.matshow(global_rewards, cmap='viridis'), plt.colorbar()
 
     n_rows = agent.world.rows
@@ -60,5 +59,6 @@ def gen_plots(agent, fig_dir, env_name):
     # axs[2].grid(which='major', color='k', linewidth=2)
     # fig.colorbar(h3, ax=axs[2])
     plt.legend()
-    fig_path = os.path.join(fig_dir, env_name + ".png")
+    env_name = env_file.stem
+    fig_path = fig_dir / (env_name + ".png")
     plt.savefig(fig_path)
