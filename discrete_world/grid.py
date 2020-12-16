@@ -1,5 +1,5 @@
 import enum
-from typing import Hashable, Iterable, List, Optional, Set, Tuple, Union
+from typing import Set, List, Tuple, Union, Iterable, Optional
 
 import numpy.random as npr
 from gym.spaces import Discrete
@@ -213,7 +213,7 @@ class GridWorld:
             return True
         return False
 
-    def is_goal(self, state: Tuple[int, int]) -> bool:
+    def is_goal(self, state: Tuple[int, int]) -> int:
         """ Checks if the state is a goal. """
         if state in self.goals:
             return True
