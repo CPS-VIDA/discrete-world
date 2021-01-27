@@ -9,7 +9,12 @@
  Explanation video: http://youtu.be/mdTeqiWyFnc
 """
 import pickle
+from typing import List
+from matplotlib.pyplot import grid
+
 import pygame
+
+from .grid import Actions
 
 # from grid import GridWorld
 # from collections import Collection
@@ -18,12 +23,16 @@ import pygame
 def getAction(s1, s2):
     x1, y1 = s1
     x2, y2 = s2
-    if (x1 == x2):
-        if y2 > y1: return 'R'
-        else: return 'L'
-    elif (y1 == y2):
-        if x2 > x1: return 'D'
-        else: return 'U'
+    if x1 == x2:
+        if y2 > y1:
+            return Actions.RIGHT
+        else:
+            return Actions.LEFT
+    elif y1 == y2:
+        if x2 > x1:
+            return Actions.DOWN
+        else:
+            return Actions.UP
 
 
 def mapping(states):
@@ -37,7 +46,21 @@ def mapping(states):
     return action_list
 
 
-def create_world(grid_world, filepath):
+def create_world_wrapper(grid_world, filepath):
+    START = 1  # Start
+    GOAL = 2  # Goal
+    OBS = 3  # Obstacle
+    OCC = 10  # Occupy demonstration state
+    categories = [GOAL, OBS]
+    for category in categories:
+        visited = create_world(category, grid_world, filepath)
+        if category == GOAL:
+            grid_world.create_goals(visited)
+        elif category == OBS:
+            grid_world.create_obstacles(visited)
+    grid_world.save_object(filepath)
+
+def create_world(category, grid_world, filepath):
     """ Design obstacles of a grid-world. """
     # Define some colors
     BLACK = (0, 0, 0)
@@ -48,11 +71,11 @@ def create_world(grid_world, filepath):
     NAVY = (60, 60, 255)
 
     state_colors = {
-        'road': WHITE,
-        'goal': NAVY,
-        'start': LIGHTB,
-        'obs': RED,
-        'occ': GREEN
+        "road": WHITE,
+        "goal": NAVY,
+        "start": LIGHTB,
+        "obs": RED,
+        "occ": GREEN,
     }
 
     START = 1  # Start
@@ -71,7 +94,7 @@ def create_world(grid_world, filepath):
     # array is simply a list of lists.
     nrows = grid_world.rows
     ncols = grid_world.cols
-    grid = []
+    grid = []  # type: List[List[int]]
     for row in range(nrows):
         # Add an empty array that will hold each cell
         # in this row
@@ -83,8 +106,6 @@ def create_world(grid_world, filepath):
     # column numbers start at zero.)
     obs_locs = grid_world.obstacles
     goals = grid_world.goals
-    N_GOAL = len(goals)
-    counter = 0
     start_loc = grid_world.init_pos
 
     grid[start_loc[0]][start_loc[1]] = START
@@ -136,19 +157,25 @@ def create_world(grid_world, filepath):
         # Draw the grid
         for row in range(nrows):
             for column in range(ncols):
-                color = state_colors['road']
+                color = state_colors["road"]
                 if grid[row][column] == OCC:
-                    color = state_colors['occ']
+                    color = state_colors["occ"]
                 elif grid[row][column] == START:
-                    color = state_colors['start']
+                    color = state_colors["start"]
                 elif grid[row][column] == GOAL:
-                    color = state_colors['goal']
+                    color = state_colors["goal"]
                 elif grid[row][column] == OBS:
-                    color = state_colors['obs']
+                    color = state_colors["obs"]
                 pygame.draw.rect(
                     screen,
-                    color, [(MARGIN + WIDTH) * column + MARGIN,
-                            (MARGIN + HEIGHT) * row + MARGIN, WIDTH, HEIGHT])
+                    color,
+                    [
+                        (MARGIN + WIDTH) * column + MARGIN,
+                        (MARGIN + HEIGHT) * row + MARGIN,
+                        WIDTH,
+                        HEIGHT,
+                    ],
+                )
 
         # Limit to 60 frames per second
         clock.tick(60)
@@ -159,9 +186,11 @@ def create_world(grid_world, filepath):
     # Be IDLE friendly. If you forget this line, the program will 'hang'
     # on exit.
     pygame.quit()
-    grid_world.update_obstacles(visited)
-
+    # grid_world.create_obstacles(visited)
+    # grid_world.save_object(filepath)
     # Save the environment using pickle
-    with open(filepath, 'wb') as data_file:
-        # json.dump(grid_world.__dict__, foo, ensure_ascii=False)
-        pickle.dump(grid_world, data_file)
+    # with open(filepath, "wb") as data_file:
+    #     # json.dump(grid_world.__dict__, foo, ensure_ascii=False)
+    #     pickle.dump(grid_world, data_file)
+
+    return visited

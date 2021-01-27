@@ -1,6 +1,7 @@
 import numpy as np
 np.random.seed(0)
 
+
 class Agent:
     def __init__(self, world):
         self.world = world
@@ -27,6 +28,7 @@ class Agent:
         elif option == 2:
             s = self.world.init_pos
             self.states.append(s)
+<<<<<<< HEAD:src/agent.py
             done = False
             while not done:
                 a = self.policy[s[0]][s[1]]
@@ -126,6 +128,12 @@ class Agent:
         # print(state)
         x, y = state
         return (self.world.cols*x + y) 
+=======
+            a = env.action_space.sample()
+            s_, r, done = env.step(a)
+            print(f"State: {s}, Action: {a}, Reward: {r}")
+            s = s_
+>>>>>>> 66440a91d2f436f12bc7e69d14932d819f2edcc6:discrete_world/agent.py
 
     def __str__(self):
         """ Printing stuff. """
@@ -135,6 +143,7 @@ class Agent:
             for j in range(self.world.cols):
                 print("%3s" % self.world.grid[i][j], end=" ")
             print("\n")
+<<<<<<< HEAD:src/agent.py
         
         print("---------- POLICY MAP ----------")
         for i in range(self.world.rows):
@@ -143,3 +152,6 @@ class Agent:
             print("\n")
         return ""  
     
+=======
+        return ""
+>>>>>>> 66440a91d2f436f12bc7e69d14932d819f2edcc6:discrete_world/agent.py
