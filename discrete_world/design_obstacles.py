@@ -10,6 +10,7 @@
 """
 import pickle
 from typing import List
+from matplotlib.pyplot import grid
 
 import pygame
 
@@ -45,7 +46,21 @@ def mapping(states):
     return action_list
 
 
-def create_world(grid_world, filepath):
+def create_world_wrapper(grid_world, filepath):
+    START = 1  # Start
+    GOAL = 2  # Goal
+    OBS = 3  # Obstacle
+    OCC = 10  # Occupy demonstration state
+    categories = [GOAL, OBS]
+    for category in categories:
+        visited = create_world(category, grid_world, filepath)
+        if category == GOAL:
+            grid_world.create_goals(visited)
+        elif category == OBS:
+            grid_world.create_obstacles(visited)
+    grid_world.save_object(filepath)
+
+def create_world(category, grid_world, filepath):
     """ Design obstacles of a grid-world. """
     # Define some colors
     BLACK = (0, 0, 0)
@@ -91,8 +106,6 @@ def create_world(grid_world, filepath):
     # column numbers start at zero.)
     obs_locs = grid_world.obstacles
     goals = grid_world.goals
-    N_GOAL = len(goals)
-    counter = 0
     start_loc = grid_world.init_pos
 
     grid[start_loc[0]][start_loc[1]] = START
@@ -173,9 +186,11 @@ def create_world(grid_world, filepath):
     # Be IDLE friendly. If you forget this line, the program will 'hang'
     # on exit.
     pygame.quit()
-    grid_world.create_obstacles(visited)
-
+    # grid_world.create_obstacles(visited)
+    # grid_world.save_object(filepath)
     # Save the environment using pickle
-    with open(filepath, "wb") as data_file:
-        # json.dump(grid_world.__dict__, foo, ensure_ascii=False)
-        pickle.dump(grid_world, data_file)
+    # with open(filepath, "wb") as data_file:
+    #     # json.dump(grid_world.__dict__, foo, ensure_ascii=False)
+    #     pickle.dump(grid_world, data_file)
+
+    return visited

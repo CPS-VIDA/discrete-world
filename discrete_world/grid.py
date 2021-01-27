@@ -1,4 +1,5 @@
 import enum
+import pickle
 from typing import Set, List, Tuple, Union, Iterable, Optional
 
 import numpy.random as npr
@@ -103,6 +104,10 @@ class GridWorld:
         return self._goals
 
     @property
+    def goals(self) -> Set[Tuple[int, int]]:
+        return self._goals
+
+    @property
     def reward(self) -> List[List[float]]:
         return self._reward
 
@@ -127,6 +132,13 @@ class GridWorld:
                 "Slipping probability needs to in [0, 1]. Got {}".format(p)
             )
 
+    def create_goals(self, goals: Iterable[Tuple[int, int]]):
+        """Setup the obstacles by inputting a list of grid positions"""
+        self._goals = set(goals)
+        for state in self.goals:
+            self.grid[state[0]][state[1]] = States.GOAL
+        self.reset()
+    
     def create_obstacles(self, obstacles: Iterable[Tuple[int, int]]):
         """Setup the obstacles by inputting a list of grid positions"""
         self._obstacles = set(obstacles)
@@ -280,5 +292,9 @@ class GridWorld:
     @property
     def observation_space(self) -> Discrete:
         return Discrete(2)  # Observations are the (row, col) position of agent
+
+    def save_object(self, filepath):
+        with open(filepath, "wb") as data_file:
+            pickle.dump(self, data_file)
 
     # TODO(aniruddh): Make a load from json method.
