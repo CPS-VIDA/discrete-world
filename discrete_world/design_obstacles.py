@@ -145,7 +145,7 @@ def create_world(category, grid_world, filepath):
                 column = pos[0] // (WIDTH + MARGIN)
                 row = pos[1] // (HEIGHT + MARGIN)
                 # Set that location to one
-                grid[row][column] = OBS
+                grid[row][column] = category # originally OBS
                 visited.append((row, column))
                 # print("Click ", pos, "Grid coordinates: ", row, column)
             # if (row, column) in goals:

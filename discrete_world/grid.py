@@ -266,6 +266,26 @@ class GridWorld:
 
         return "\n".join(grid_lines)
 
+    def done_function(self, state: Tuple[int, int]) -> bool:
+        '''
+            Determines when an episode terminates. Customizable function depending on tasks.
+            Design suggestions:
+            A. Single-agent, Single-goal:
+                1. Terminate an (episode) when an agent reaches the goal or hits any obstacle. (default)
+            B. Single-agent, Multi-goal:
+                1. Terminate when agent has visited all goals. Track the goals visited using `set()`.
+                2. Terminate when agent hits an obstacle.
+            C. Multi-agent, Single/Common goal(s):
+                1. Terminate when any agent reaches goal.
+                2. Terminate when any agent hits obstacle.
+            D. Multi-agent, Single distinctive goals:
+                1. Terminate when all agents reach respective goals.
+                2. Terminate when any agent hits an obstacle
+        '''
+        if self.is_goal(state) or self.is_obstacle(state):
+            return True
+        return False
+
     def step(self, action: Actions) -> Tuple[Tuple[int, int], float, bool]:
         """ Returns next state, observed reward and done. """
         action = Actions(action)
@@ -273,7 +293,7 @@ class GridWorld:
         next_state = self.next_state(self.current_state, p_action)  # next state
         reward = self.reward[next_state[0]][next_state[1]]  # reward observed
         self._current_pos = next_state  # update current state
-        done = self.is_goal(next_state)  # check if goal is reached
+        done = self.done_function(next_state)  # check if goal is reached
         return (next_state, reward, done)
 
     def reset(self):

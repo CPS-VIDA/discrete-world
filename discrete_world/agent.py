@@ -5,7 +5,7 @@ np.random.seed(0)
 class Agent:
     def __init__(self, world):
         self.world = world
-        self.q_table = np.zeros((self.world.rows*self.world.cols, len(self.world.action_space)))
+        self.q_table = np.zeros((self.world.rows*self.world.cols, self.world.action_space.n))
         self.policy = [['_' for j in range(self.world.cols)] for i in range(self.world.rows)]
 
     def gen_policy(self, option=2):
@@ -21,14 +21,13 @@ class Agent:
             s = env.init_pos
             for i in range(5):
                 self.states.append(s)
-                a = np.random.choice(env.action_space)
+                a = env.action_space.sample()
                 s_, r, done = env.step(a)
                 print(f"State: {s}, Action: {a}, Reward: {r}")
                 s = s_
         elif option == 2:
             s = self.world.init_pos
             self.states.append(s)
-<<<<<<< HEAD:src/agent.py
             done = False
             while not done:
                 a = self.policy[s[0]][s[1]]
@@ -128,12 +127,6 @@ class Agent:
         # print(state)
         x, y = state
         return (self.world.cols*x + y) 
-=======
-            a = env.action_space.sample()
-            s_, r, done = env.step(a)
-            print(f"State: {s}, Action: {a}, Reward: {r}")
-            s = s_
->>>>>>> 66440a91d2f436f12bc7e69d14932d819f2edcc6:discrete_world/agent.py
 
     def __str__(self):
         """ Printing stuff. """
@@ -143,7 +136,6 @@ class Agent:
             for j in range(self.world.cols):
                 print("%3s" % self.world.grid[i][j], end=" ")
             print("\n")
-<<<<<<< HEAD:src/agent.py
         
         print("---------- POLICY MAP ----------")
         for i in range(self.world.rows):
@@ -152,6 +144,3 @@ class Agent:
             print("\n")
         return ""  
     
-=======
-        return ""
->>>>>>> 66440a91d2f436f12bc7e69d14932d819f2edcc6:discrete_world/agent.py

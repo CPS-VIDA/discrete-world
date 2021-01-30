@@ -42,7 +42,7 @@ def main(env_file: Path, fig_dir: Path, create_obstacles: bool = False):
     robot = Agent(g)
 
     # ----- This is where you define your RL agent. I just chose a random policy ----
-    robot.gen_policy()
+    robot.gen_policy(1)
 
     # Show the plots of the grid-world and its reward
     # Image available in the fig_dir under parent.
