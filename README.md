@@ -13,7 +13,7 @@ If you use this grid-world setup, please consider citing:
 ```
 @misc{puranic_dw,
 author = "Aniruddh G. Puranic and Anand Balakrishnan",
-title  = "Discrete-World Environment for Multiple Tasks",
+title  = "Reinforcement Learning Environment for Multiple Tasks",
 year   = 2020,
 url    = {https://github.com/CPS-VIDA/discrete-world} 
 }
