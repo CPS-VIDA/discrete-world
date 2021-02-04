@@ -22,6 +22,7 @@ class Actions(enum.IntEnum):
     RIGHT = 1
     DOWN = 2
     LEFT = 3
+    NO_OP = 4
 
 
 class GridWorld:
@@ -203,6 +204,8 @@ class GridWorld:
             if y == 0:
                 return (x, y)
             neighbor = (x, y - 1)
+        elif action == Actions.NO_OP:
+            return (x, y)
         return neighbor
 
     def neighbors(self, state: Tuple[int, int]) -> Set[Tuple[int, int]]:
